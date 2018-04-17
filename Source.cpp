@@ -2,6 +2,7 @@
 #include <fcntl.h> //_O_U16TEXT
 #include <io.h>    //_setmode()
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <conio.h>
 #include <malloc.h>
@@ -9,31 +10,33 @@
 
 
 struct SinhVien {
-	char *MSSV;
+	wchar_t *MSSV;
 	wchar_t *HoVaTen;
 	wchar_t *Faculty;
 	int	Khoa;
-	char *NgaySinh;
-	char *Email;
+	wchar_t *NgaySinh;
+	wchar_t *Email;
 	wchar_t *HinhAnh;
 	wchar_t *Mota;
 	wchar_t *SoThich;
 };
 typedef struct SinhVien SV;
 
+
+//Số ký tự tối đa của các chuỗi, nếu có thay đổi chỉ cần thay đổi tại đây
+int mssv = 11;
+int hovaten = 31;
+int faculty = 31;
+int khoa = 4;
+int ngaysinh = 11;
+int email = 31;
+int hinhanh = 31;
+int mota = 1001;
+int sothich = 1001;
 #define maxSize 8000
 
-void MemoryInit(SV &a) {
-	a.MSSV = (char*)malloc(10 * sizeof(char));
-	a.HoVaTen = (wchar_t*)malloc(30 * sizeof(char));
-	a.Faculty = (wchar_t*)malloc(30 * sizeof(char));
-	a.NgaySinh = (char*)malloc(10 * sizeof(char));
-	a.Email = (char*)malloc(30 * sizeof(char));
-	a.HinhAnh = (wchar_t*)malloc(30 * sizeof(char));
-	a.Mota = (wchar_t*)malloc(1000 * sizeof(char));
-	a.SoThich = (wchar_t*)malloc(1000 * sizeof(char));
-}
 
+//Xóa vùng nhớ các con trỏ trong kiểu SV
 void MemoryDelete(SV &a) {
 	if (a.MSSV != NULL) free(a.MSSV);
 	if (a.HoVaTen != NULL) free(a.HoVaTen);
@@ -44,55 +47,162 @@ void MemoryDelete(SV &a) {
 	if (a.Mota != NULL) free(a.Mota);
 	if (a.SoThich != NULL) free(a.SoThich);
 }
-int GetString(wchar_t* buf,char* &data, int beginpos) {
-	data = (char*)malloc(sizeof(char)*10);
-	int length = 0;
-	int i;
-	for (i = beginpos; buf[i] != '"'; i++) {
-		data[length] = buf[i];
-		length++;
+
+
+//Xóa ký tự bị thừa
+void Patch(wchar_t* s) {
+	if (s == NULL) return;
+	//Xóa ký tự
+	wchar_t* s2 = s;
+	for (; (*s2) != '\0'; ++s2)
+	{
+		if ((*s2 != '\n') && (*s2 != '\"') && (*s2 != '�'))
+			*(s++) = *s2;
 	}
-	data[length] = '\0';
-	return i;
-}
-void GetWString(wchar_t* buf, wchar_t* wdata) {
-
+	*s = '\0';
 }
 
-//void GetData(wchar_t* buf,SV data) {
-//	char*p;
-//	while (p = )
-//}
-
-int main() //int argc, wchar_t *argv[]
+//Lấy dữ liệu kiểu chuỗi Unicode
+wchar_t* GetWString(FILE *fp,int size)
 {
+	wchar_t *data = (wchar_t*)malloc(size * sizeof(wchar_t) * 2); //Vì wchar_t có lúc bằng 2 có lúc bằng 4
+	wchar_t ch = fgetwc(fp);
+	if (ch != L',')
+	{
+		if (ch == L'\"')  //TH1:"1","2",
+		{
+			fwscanf(fp, L"%[^\"]", data);
+			fseek(fp, 1L, SEEK_CUR);
+		}
+		else  //TH2: 1,2,
+		{
+			fseek(fp, -1L, SEEK_CUR);
+			fwscanf(fp, L"%[^,]", data);
+		}
+	}
+	else
+	{
+		wchar_t ch2 = fgetwc(fp);
+		if (ch2 == L'\"')  //TH3: ,"2","3",
+		{
+			fwscanf(fp, L"%[^\"]", data);
+			fseek(fp, 1L, SEEK_CUR);
+		}
+		else //TH4: , 2, 3,
+		{
+			fseek(fp, -1L, SEEK_CUR);
+			fwscanf(fp, L"%[^,]", data);
+		}
+	}
+	Patch(data);
+	return data;
+}
+
+
+
+//Lấy dữ liệu kiểu số nguyên
+int GetNumb(FILE* fp, int size) {
+	int data = 0;
+	wchar_t* temp = NULL;
+	temp = GetWString(fp, size);
+	data=wcstol(temp, 0, 10);
+	if (temp != NULL) {
+		free(temp); 
+	}
+	return data;
+}
+
+
+//Lấy dữ liệu cho 1 biến kiểu SV
+SV GetSVData(FILE*fp) {
+	SV data;
+	data.MSSV = GetWString(fp, mssv);
+	data.HoVaTen = GetWString(fp, hovaten);
+	data.Faculty = GetWString(fp, faculty);
+	data.Khoa = GetNumb(fp, khoa);
+	data.NgaySinh = GetWString(fp, ngaysinh);
+	data.Email = GetWString(fp, email);
+	data.HinhAnh = GetWString(fp, hinhanh);
+	data.Mota = GetWString(fp, mota);
+	data.SoThich = GetWString(fp, sothich);
+	return data;
+}
+
+
+//Lấy dữ liệu cho 1 mảng kiểu SV, biết trước số lượng
+SV* GetInput(FILE*fp,int sl) {
+	rewind(fp);
+	SV *data_arr = (SV*)malloc(sizeof(SV)*sl);
+	for (int i = 0; i < sl; i++) {
+		data_arr[i] = GetSVData(fp);
+	}
+	return data_arr;
+}
+
+
+//Xác định số lượng cho mảng SV
+int CountSV(FILE *&FileIn) {
+	rewind(FileIn);
+	int dem = 0;
+	wchar_t ch;
+	while (!feof(FileIn))
+	{
+		ch = fgetwc(FileIn);
+		if (ch == L'\n')
+		{
+			dem++;
+		}
+	}
+	return dem;
+}
+
+
+//In thông tin SV ra màn hình
+void PrintSV(SV a) {
+	wprintf(L" - MSSV:\t%ls\n", a.MSSV);
+	wprintf(L" - Họ và tên:\t%ls\n", a.HoVaTen);
+	wprintf(L" - Khoa:\t%ls\n", a.Faculty);
+	wprintf(L" - Khóa tuyển:\t%ld\n", a.Khoa);
+	wprintf(L" - Ngày sinh:\t%ls\n", a.NgaySinh);
+	wprintf(L" - Email:\t%ls\n", a.Email);
+	wprintf(L" - Hình ảnh cá nhân:\t%ls\n", a.HinhAnh);
+	wprintf(L" - Mô tả bản thân:\t%ls\n", a.Mota);
+	wprintf(L" - Sở thích:\t%ls\n\n\n", a.SoThich);
+}
+
+
+int wmain(int argc, wchar_t *argv[]) {
+
 	_setmode(_fileno(stdout), _O_U16TEXT); //needed for output
 	_setmode(_fileno(stdin), _O_U16TEXT); //needed for input
 
-	wchar_t *buf = (wchar_t*)malloc(maxSize);
-	//wchar_t *buf = NULL;
-	FILE* fileCSV = _wfopen(L"Data.csv", L"r, ccs=UTF-8");
-	if (!fileCSV) {
+	FILE* input = _wfopen(L"Data.csv", L"r, ccs=UTF-8");
+	if (!input) {
 		wprintf(L"Không thể đọc file\n");
 	}
 
+	//Đếm số lượng SV
+	int sl = CountSV(input);
+	wprintf(L"Số lượng sinh viên: %ld\n\n\n", sl);
+	SV* data = NULL;
 
-	SV *data = NULL;
-	int dem = 0;
+	//Lấy dữ liệu từ file CSV
+	data = GetInput(input, sl);
 
-	while (fgetws(buf, maxSize, fileCSV) != NULL)
-	{
-		buf[wcslen(buf) - 1] = L'\0'; // eat the newline fgets() stores
-		wprintf(L"%s\n", buf);
-		data = (SV*)realloc(data, sizeof(SV)*(dem + 1));
-		MemoryInit(data[dem]);
-		GetString(buf, data[dem].MSSV, 1);
-		printf("%s\n", data[dem].MSSV);
-		dem++;
+	//Xuất ra màn hình
+	for (int i = 0; i < sl; i++) {
+		PrintSV(data[i]);
 	}
-	if (data != NULL)
+
+	//Xoá vùng nhớ, đóng file
+	for (int i = 0; i < sl; i++) {
+		MemoryDelete(data[i]);
+	}
+	if (data != NULL) {
 		free(data);
-	fclose(fileCSV);
+		wprintf(L"OK\n");
+	}
+	fclose(input);
 	_getch();
 	return 0;
 }
