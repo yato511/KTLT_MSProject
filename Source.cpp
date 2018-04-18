@@ -1,5 +1,5 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
-#include <fcntl.h> //_O_U16TEXT
+#include <fcntl.h> //_O_U16TEXTýhdhhsdshs
 #include <io.h>    //_setmode()
 #include <stdio.h>
 #include <stdlib.h>
