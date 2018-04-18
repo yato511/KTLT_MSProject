@@ -19,6 +19,7 @@ struct SinhVien {
 	wchar_t *HinhAnh;
 	wchar_t *Mota;
 	wchar_t *SoThich;
+	//wchar_t **SoThich_extra;
 };
 typedef struct SinhVien SV;
 
@@ -50,7 +51,7 @@ void MemoryDelete(SV &a) {
 
 
 //Xóa ký tự bị thừa
-void Patch(wchar_t* s) {
+void Fix(wchar_t* s) {
 	if (s == NULL) return;
 	//Xóa ký tự
 	wchar_t* s2 = s;
@@ -63,7 +64,7 @@ void Patch(wchar_t* s) {
 }
 
 //Lấy dữ liệu kiểu chuỗi Unicode
-wchar_t* GetWString(FILE *fp,int size)
+wchar_t* GetWString(FILE *fp, int size)
 {
 	wchar_t *data = (wchar_t*)malloc(size * sizeof(wchar_t) * 2); //Vì wchar_t có lúc bằng 2 có lúc bằng 4
 	wchar_t ch = fgetwc(fp);
@@ -94,7 +95,7 @@ wchar_t* GetWString(FILE *fp,int size)
 			fwscanf(fp, L"%[^,]", data);
 		}
 	}
-	Patch(data);
+	Fix(data);
 	return data;
 }
 
@@ -105,9 +106,9 @@ int GetNumb(FILE* fp, int size) {
 	int data = 0;
 	wchar_t* temp = NULL;
 	temp = GetWString(fp, size);
-	data=wcstol(temp, 0, 10);
+	data = wcstol(temp, 0, 10);
 	if (temp != NULL) {
-		free(temp); 
+		free(temp);
 	}
 	return data;
 }
@@ -130,7 +131,7 @@ SV GetSVData(FILE*fp) {
 
 
 //Lấy dữ liệu cho 1 mảng kiểu SV, biết trước số lượng
-SV* GetInput(FILE*fp,int sl) {
+SV* GetInput(FILE*fp, int sl) {
 	rewind(fp);
 	SV *data_arr = (SV*)malloc(sizeof(SV)*sl);
 	for (int i = 0; i < sl; i++) {
@@ -169,6 +170,25 @@ void PrintSV(SV a) {
 	wprintf(L" - Mô tả bản thân:\t%ls\n", a.Mota);
 	wprintf(L" - Sở thích:\t%ls\n\n\n", a.SoThich);
 }
+//Hàm copy 2 file
+void CopyFile(FILE* src, FILE* des) {
+	rewind(src);
+	wchar_t ch;
+	do {
+		ch = fgetwc(src);
+		fputwc(ch, des);
+	} while (!feof(src));
+	wprintf(L"Done\n");
+}
+//Hàm tạo tên file HTML: MSSV.htm
+wchar_t* CreateFileName(wchar_t* mssv, wchar_t* tail) {
+	wchar_t* filename = (wchar_t*)malloc(sizeof(wchar_t) * 15);
+	wcscpy(filename, mssv);
+	wcscat(filename, tail);
+	return filename;
+}
+//Tìm và thay thế chuỗi trong file HTML
+
 
 
 int wmain(int argc, wchar_t *argv[]) {
@@ -176,7 +196,7 @@ int wmain(int argc, wchar_t *argv[]) {
 	_setmode(_fileno(stdout), _O_U16TEXT); //needed for output
 	_setmode(_fileno(stdin), _O_U16TEXT); //needed for input
 
-	FILE* input = _wfopen(L"Data.csv", L"r, ccs=UTF-8");
+	FILE* input = _wfopen(L"ttt.csv", L"r, ccs=UTF-8");
 	if (!input) {
 		wprintf(L"Không thể đọc file\n");
 	}
@@ -193,8 +213,37 @@ int wmain(int argc, wchar_t *argv[]) {
 	for (int i = 0; i < sl; i++) {
 		PrintSV(data[i]);
 	}
+	fclose(input);
 
-	//Xoá vùng nhớ, đóng file
+	//Mở file HTML mẫu, để đọc và copy qua file mới
+	wchar_t StIndex[] = L"StudentIndex";
+	wchar_t StName[] = L"StudentName";
+
+
+
+
+	wchar_t tail[] = L".htm";
+	for (int i = 0; i < sl; i++) {
+		FILE* sample = _wfopen(L"Sample.htm", L"r, ccs=UTF-8");
+		if (!sample) {
+			wprintf(L"Không thể đọc file\n");
+		}
+		//Tạo tên File html : MSSV.htm
+		wchar_t* FileName = CreateFileName(data[i].MSSV, tail);
+		wprintf(L"%ls\n", FileName);
+		wprintf(L"%ls\n", data[i].MSSV); 
+		FILE* output = _wfopen(FileName, L"w, ccs=UTF-8");
+		if (!output) {
+			wprintf(L"Không thể mở file\n");
+		}
+		CopyFile(sample, output);
+		fclose(sample);
+		fclose(output);
+	}
+	
+	
+	
+	//Xoá vùng nhớ
 	for (int i = 0; i < sl; i++) {
 		MemoryDelete(data[i]);
 	}
@@ -202,7 +251,6 @@ int wmain(int argc, wchar_t *argv[]) {
 		free(data);
 		wprintf(L"OK\n");
 	}
-	fclose(input);
 	_getch();
 	return 0;
 }
