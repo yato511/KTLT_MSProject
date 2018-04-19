@@ -37,6 +37,25 @@ int sothich = 1001;
 #define maxSize 8000
 
 
+//Các chuỗi để tìm kiếm và thay thế trong Sample.htm
+wchar_t Title[] = L"<title>HCMUS - ";
+wchar_t EndTitle[] = L"</title>";
+wchar_t FalUp[] = L"<div class=\"Personal_Department\">KHOA ";
+wchar_t EndFalUp[] = L"</div>";
+wchar_t Email[] = L"Email: ";
+wchar_t EndEmailTop[] = L"\n";
+wchar_t Photo[] = L"<img src=\"";
+wchar_t EndPhoto[] = L"\" class = \"Personal_Hinhcanhan\" / >";
+wchar_t Name[] = L"<li>Họ và tên: ";
+wchar_t End[] = L"</li>";
+wchar_t Mssv[] = L"<li>MSSV: ";
+wchar_t	Fal[] = L"<li>Sinh viên khoa ";
+wchar_t Birth[] = L"<li>Ngày sinh :";
+wchar_t Desc[] = L"<div class=\"Description\">";
+
+wchar_t tail[] = L".htm";//Đuôi tên file
+
+
 //Xóa vùng nhớ các con trỏ trong kiểu SV
 void MemoryDelete(SV &a) {
 	if (a.MSSV != NULL) free(a.MSSV);
@@ -86,8 +105,8 @@ wchar_t* GetWString(FILE *fp, int size)
 		wchar_t ch2 = fgetwc(fp);
 		if (ch2 == L'\"')  //TH3: ,"2","3",
 		{
-			fwscanf(fp, L"%[^\"]", data);
-			fseek(fp, 1L, SEEK_CUR);
+		fwscanf(fp, L"%[^\"]", data);
+		fseek(fp, 1L, SEEK_CUR);
 		}
 		else //TH4: , 2, 3,
 		{
@@ -132,7 +151,8 @@ SV GetSVData(FILE*fp) {
 
 //Lấy dữ liệu cho 1 mảng kiểu SV, biết trước số lượng
 SV* GetInput(FILE*fp, int sl) {
-	rewind(fp);
+	//rewind(fp);
+	fseek(fp, 3L, SEEK_SET);
 	SV *data_arr = (SV*)malloc(sizeof(SV)*sl);
 	for (int i = 0; i < sl; i++) {
 		data_arr[i] = GetSVData(fp);
@@ -170,16 +190,8 @@ void PrintSV(SV a) {
 	wprintf(L" - Mô tả bản thân:\t%ls\n", a.Mota);
 	wprintf(L" - Sở thích:\t%ls\n\n\n", a.SoThich);
 }
-//Hàm copy 2 file
-void CopyFile(FILE* src, FILE* des) {
-	rewind(src);
-	wchar_t ch;
-	do {
-		ch = fgetwc(src);
-		fputwc(ch, des);
-	} while (!feof(src));
-	wprintf(L"Done\n");
-}
+
+
 //Hàm tạo tên file HTML: MSSV.htm
 wchar_t* CreateFileName(wchar_t* mssv, wchar_t* tail) {
 	wchar_t* filename = (wchar_t*)malloc(sizeof(wchar_t) * 15);
@@ -187,7 +199,54 @@ wchar_t* CreateFileName(wchar_t* mssv, wchar_t* tail) {
 	wcscat(filename, tail);
 	return filename;
 }
-//Tìm và thay thế chuỗi trong file HTML
+
+//Từ chuỗi buf = BeginSign + "..." + EndSign thay thế thành BeginSign + Str + Engsign
+void ReplaceString(wchar_t* buf, wchar_t*BeginSign, wchar_t*EndSign, wchar_t*str) {
+	wchar_t* temp1 = wcsstr(buf, BeginSign);
+	wchar_t* temp2 = wcsstr(buf, EndSign);
+	if (temp1 != NULL && temp2!NULL = )) {
+
+}
+		
+	
+}
+
+//Hàm copy 2 file
+void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
+	for (int i = 0; i < sl; i++) {
+		FILE* sample = _wfopen(FileSample, L"r, ccs=UTF-8");
+		if (!sample) {
+			wprintf(L"Không thể đọc file Template\n");
+		}
+		wchar_t* FileOutput = CreateFileName(data[i].MSSV, tail);
+		FILE* output = _wfopen(FileOutput, L"w, ccs=UTF-8");
+		if (!output) {
+			wprintf(L"Không thể mở file Template\n");
+		}
+		wchar_t* buf = (wchar_t*)malloc(1024);
+		while (!feof(sample)) {
+			fgetws(buf, 1024, sample);
+			ReplaceString(buf, Title, EndTitle, data[i].HoVaTen);
+			ReplaceString(buf, FalUp, EndFalUp, data[i].Faculty);
+			ReplaceString(buf, Email, EndEmailTop, data[i].Email);
+			ReplaceString(buf, Photo, EndPhoto, data[i].HinhAnh);
+			ReplaceString(buf, Name, End, data[i].HoVaTen);
+			ReplaceString(buf, Mssv, End, data[i].MSSV);
+			ReplaceString(buf, Fal, End, data[i].Faculty);
+			ReplaceString(buf, Birth, End, data[i].NgaySinh);
+			ReplaceString(buf, Email, End, data[i].Email);
+			fputws(buf, output);
+		}
+		fclose(sample);
+		fclose(output);
+	}
+}
+	
+
+
+
+
+
 
 
 
@@ -196,11 +255,12 @@ int wmain(int argc, wchar_t *argv[]) {
 	_setmode(_fileno(stdout), _O_U16TEXT); //needed for output
 	_setmode(_fileno(stdin), _O_U16TEXT); //needed for input
 
-	FILE* input = _wfopen(L"ttt.csv", L"r, ccs=UTF-8");
+	FILE* input = _wfopen(L"Data.csv", L"r, ccs=UTF-8");
 	if (!input) {
-		wprintf(L"Không thể đọc file\n");
+		wprintf(L"Không thể mở file CSV\n");
 	}
 
+	
 	//Đếm số lượng SV
 	int sl = CountSV(input);
 	wprintf(L"Số lượng sinh viên: %ld\n\n\n", sl);
@@ -209,37 +269,29 @@ int wmain(int argc, wchar_t *argv[]) {
 	//Lấy dữ liệu từ file CSV
 	data = GetInput(input, sl);
 
+
 	//Xuất ra màn hình
 	for (int i = 0; i < sl; i++) {
 		PrintSV(data[i]);
 	}
 	fclose(input);
 
+	wchar_t temp1[] = L"Sample.htm";
+	CreateHTML(temp1, data, sl);
+
 	//Mở file HTML mẫu, để đọc và copy qua file mới
-	wchar_t StIndex[] = L"StudentIndex";
-	wchar_t StName[] = L"StudentName";
 
-
-
-
-	wchar_t tail[] = L".htm";
-	for (int i = 0; i < sl; i++) {
-		FILE* sample = _wfopen(L"Sample.htm", L"r, ccs=UTF-8");
-		if (!sample) {
-			wprintf(L"Không thể đọc file\n");
-		}
-		//Tạo tên File html : MSSV.htm
-		wchar_t* FileName = CreateFileName(data[i].MSSV, tail);
-		wprintf(L"%ls\n", FileName);
-		wprintf(L"%ls\n", data[i].MSSV); 
-		FILE* output = _wfopen(FileName, L"w, ccs=UTF-8");
-		if (!output) {
-			wprintf(L"Không thể mở file\n");
-		}
-		CopyFile(sample, output);
-		fclose(sample);
-		fclose(output);
-	}
+	//for (int i = 0; i < sl; i++) {
+	
+	//	wchar_t* filename = CreateFileName(data[i].MSSV, tail);
+	//	FILE* output = _wfopen(filename, L"r, ccs=UTF-8");
+	//	if (!output) {
+	//		wprintf(L"Không thể mở tạo file HTML\n");
+	//	}
+	//	CopyFile(sample, output);
+	//	//Xử lí File HTML
+	//	fclose(output);
+	//}
 	
 	
 	
