@@ -15,8 +15,8 @@ wchar_t Mssv[] = L"MSSV: ";
 wchar_t	Fac[] = L"Sinh viên khoa ";
 wchar_t EmailBot[] = L"Email: ";
 wchar_t Birth[] = L"Ngày sinh: ";
-wchar_t Desc[] = L"class=\"Description\">";
-wchar_t Hobby[] = L" <div class=\"InfoGroup\">Sở thích</div>";
+wchar_t Desc[] = L"Description";
+wchar_t Hobby[] = L"Sở thích";
 wchar_t HobbyEnd[] = L"</ul>";
 wchar_t HobbyElement[] = L"<li>";
 wchar_t End[] = L"</";	//Đa số các lệnh đều kết thúc bằng chuỗi ký tự này
