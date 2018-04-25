@@ -3,8 +3,8 @@
 //Các chuỗi để tìm kiếm và thay thế trong Sample.htm
 	//Header
 wchar_t Title[] = L"<title>HCMUS - ";
-wchar_t NameMssv[] = L"<span class=\"Personal_FullName\">";
-wchar_t FacUp[] = L"class=\"Personal_Department\">KHOA ";
+wchar_t NameMssv[] = L"\"Personal_FullName\">";
+wchar_t FacUp[] = L"\"Personal_Department\">KHOA ";
 wchar_t EmailTop[] = L"Email: ";
 wchar_t EndEmailTop[] = L"\n";
 wchar_t Photo[] = L"<img src=\"";
@@ -36,7 +36,7 @@ wchar_t PjOwner_Index[] = L"1712827 - Trần Quốc Toản"; //MSSV và tên ng�
 													   
 													   
 													   
-													   //CÁC HÀM DÙNG CHO FILE HTML
+						   //CÁC HÀM DÙNG CHO FILE HTML
 
 
 //Tạo tên File HTML: MSSV.htm
@@ -53,12 +53,15 @@ void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 	wchar_t* buf = (wchar_t*)malloc(1024); //Biến để đọc từng dòng
 	for (int i = 0; i < sl; i++) {
 
-		//Mở File
+		//Mở File HTML mẫu
 		FILE* sample = _wfopen(FileSample, L"r, ccs=UTF-8");
 		if (!sample) {
 			wprintf(L"Không thể đọc file HTML mẫu %ls\n", FileSample);
 		}
+
+		//Tạo file HTML xuất ra
 		wchar_t* FileOutput = CreateFileName(data[i].MSSV, FileTail);
+		
 		FILE* output = _wfopen(FileOutput, L"w, ccs=UTF-8");
 		if (!output) {
 			wprintf(L"Không thể mở file %ls\n", FileOutput);

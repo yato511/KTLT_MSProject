@@ -6,10 +6,10 @@ int size_hovaten = 31;
 int size_faculty = 31;
 int size_khoa = 5;
 int size_ngaysinh = 11;
-int size_email = 31;
+int size_email = 51;
 int size_hinhanh = 31;
 int size_mota = 1001;
-int size_sothich = 501;
+int size_sothich = 1001;
 #define maxSize 8000
 
 
@@ -50,7 +50,6 @@ void MemoryDelete(SV &a) {
 
 	if (a.SoThich != NULL) free(a.SoThich);
 
-	wprintf(L"---------> Clear Memory: Done\n");
 }
 
 //Khai báo vùng nhớ các con trỏ trong kiểu SV
@@ -91,7 +90,7 @@ void Upper(wchar_t *str)
 }
 
 
-//Tìm vị trí của chuỗi con trong chuỗi cha
+//Tìm vị trí của chuỗi con
 int FindSubString(wchar_t* str, wchar_t* substr)
 {
 	int len = wcslen(str);
@@ -122,8 +121,8 @@ void ReplaceString(wchar_t* buf, wchar_t*BeginSign, wchar_t*EndSign, wchar_t*str
 		wchar_t* temp3 = (wchar_t*)malloc(512 * sizeof(wchar_t));
 
 		wcsncpy(temp1, buf, pos_ins);
-		temp1[pos_ins] = '\0';			//temp1 = "something" + EndSign + "..."
-		wcscpy(temp2, buf + pos_ins);	//temp2 = "
+		temp1[pos_ins] = '\0';			
+		wcscpy(temp2, buf + pos_ins);	
 		wcscpy(temp3, buf + pos2);
 		wcscpy(temp2, str);
 		temp2[wcslen(str)] = '\0';

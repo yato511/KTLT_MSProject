@@ -7,7 +7,7 @@
 int GetWS(FILE*fp, wchar_t*s) {
 	wchar_t c;
 	c = fgetwc(fp);
-	if (c == '\n' || c == EOF) {
+	if (c == '\n' || feof(fp)) {
 		s = NULL;
 		return 1;
 	}
@@ -36,7 +36,7 @@ int GetWS(FILE*fp, wchar_t*s) {
 	}
 	if (c != '\n')
 		c = fgetwc(fp);
-	if (c == '\n' || c == EOF) {
+	if (c == '\n' || feof(fp)) {
 		return 1;
 	}
 	else if (c == ',') {
@@ -80,13 +80,8 @@ void GetSV(FILE*fp, SV &a) {
 	i = GetWS(fp, a.HinhAnh);
 	i = GetWS(fp, a.Mota);
 
-	/*if (i == 1) {
-	a.HobbyCount = 1;
-	a.SoThich = (wchar_t**)realloc(a.SoThich, 1);
-	a.SoThich[0] = (wchar_t*)malloc(sizeof(wchar_t) * 50);
-	wchar_t temp[] = L"Không có sở thích";
-	wcscpy(a.SoThich[0], temp);
-	}*/
+
+	//Trường sở thích được đọc riêng
 	a.HobbyCount = 0;
 	while (i != 1) {
 		a.SoThich[a.HobbyCount] = (wchar_t*)malloc(sizeof(wchar_t)*500);
