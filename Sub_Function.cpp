@@ -16,21 +16,108 @@ int size_sothich = 1001;
 		//CÁC HÀM PHỤ TRỢ KHÁC
 
 //In thông tin SV ra màn hình
-void PrintSV(SV a) {
-	wprintf(L" - MSSV\t\t\t:\t%ls\n", a.MSSV);
-	wprintf(L" - Họ và tên\t\t:\t%ls\n", a.HoVaTen);
-	wprintf(L" - Khoa\t\t\t:\t%ls\n", a.Faculty);
-	wprintf(L" - Khóa tuyển\t\t:\t%ld\n", a.Khoa);
-	wprintf(L" - Ngày sinh\t\t:\t%ls\n", a.NgaySinh);
-	wprintf(L" - Email\t\t:\t%ls\n", a.Email);
-	wprintf(L" - Hình ảnh cá nhân\t:\t%ls\n", a.HinhAnh);
-	wprintf(L" - Mô tả bản thân\t:\t%ls\n", a.Mota);
-	if (a.HobbyCount == 0)
-		wprintf(L" - Sở thích\t\t:\tKhông có sở thích\n");
-	for (int i = 0; i < a.HobbyCount; i++) {
-		wprintf(L" - Sở thích %ld\t\t:\t%ls\n", i + 1, a.SoThich[i]);
-	}
+void PrintSV(SV *a, int sl) {
+	wprintf(L"\nChọn thông tin của sinh viên muốn in ra màn hình\n");
+	wprintf(L"\t 1. MSSV\n");
+	wprintf(L"\t 2. Họ và tên\n");
+	wprintf(L"\t 3. Khoa\n");
+	wprintf(L"\t 4. Khóa tuyển\n");
+	wprintf(L"\t 5. Ngày sinh\n");
+	wprintf(L"\t 6. Email\n");
+	wprintf(L"\t 7. Hình ảnh cá nhân\n");
+	wprintf(L"\t 8. Mô tả\n");
+	wprintf(L"\t 9. Sở thích\n");
+	wprintf(L"\t 0. Tất cả\n");
+	wprintf(L"\t-1. Bỏ qua\n");
+	int c;
+	wscanf(L"%ld", &c);
+	while (c != -1) {
+		for (int i = 0; i < sl; i++) {
+			wprintf(L"\n\nThông tin của sinh viên thứ %ld:\n\n", i + 1);
+			switch (c) {
+			case 1:
+			
+				wprintf(L" - MSSV: %ls\n", a[i].MSSV);
+				break;
+			
+			case 2:
+			
+				wprintf(L" - Họ và tên: %ls\n", a[i].HoVaTen);
+				break;
+			
+			case 3:
+			
+				wprintf(L" - Khoa: %ls\n", a[i].Faculty);
+				break;
+			
+			case 4:
+			
+				wprintf(L" - Khóa tuyển: %ld\n", a[i].Khoa);
+				break;
+			
+			case 5:
+			
+				wprintf(L" - Ngày sinh: %ls\n", a[i].NgaySinh);
+				break;
+			
+			case 6:
+			
+				wprintf(L" - Email: %ls\n", a[i].Email);
+				break;
+			
+			case 7:
+			
+				wprintf(L" - Hình ảnh cá nhân: %ls\n", a[i].HinhAnh);
+				break;
+			
+			case 8:
+			
+				wprintf(L" - Mô tả bản thân: %ls\n", a[i].Mota);
+				break;
+			
+			case 9:
+			
+				if (a[i].HobbyCount == 0)
+					wprintf(L" - Sở thích: Không có sở thích\n");
+				for (int j = 0; j < a[i].HobbyCount; j++) {
+					wprintf(L" - Sở thích %ld: %ls\n", j + 1, a[i].SoThich[j]);
+				}
+				break;
+			
+			default:
+			
+				wprintf(L" - MSSV\t\t\t:\t%ls\n", a[i].MSSV);
+				wprintf(L" - Họ và tên\t\t:\t%ls\n", a[i].HoVaTen);
+				wprintf(L" - Khoa\t\t\t:\t%ls\n", a[i].Faculty);
+				wprintf(L" - Khóa tuyển\t\t:\t%ld\n", a[i].Khoa);
+				wprintf(L" - Ngày sinh\t\t:\t%ls\n", a[i].NgaySinh);
+				wprintf(L" - Email\t\t:\t%ls\n", a[i].Email);
+				wprintf(L" - Hình ảnh cá nhân\t:\t%ls\n", a[i].HinhAnh);
+				wprintf(L" - Mô tả bản thân\t:\t%ls\n", a[i].Mota);
+				if (a[i].HobbyCount == 0)
+					wprintf(L" - Sở thích\t\t:\tKhông có sở thích\n");
+				for (int j = 0; j < a[i].HobbyCount; j++) {
+					wprintf(L" - Sở thích %ld\t\t:\t%ls\n", j + 1, a[i].SoThich[j]);
+				}
+			}
+			
+		}
 
+		wprintf(L"\n\nBạn có muốn in ra màn hình thêm thông tin nào nữa không?\n");
+		wprintf(L"\t 1. MSSV\n");
+		wprintf(L"\t 2. Họ và tên\n");
+		wprintf(L"\t 3. Khoa\n");
+		wprintf(L"\t 4. Khóa tuyển\n");
+		wprintf(L"\t 5. Ngày sinh\n");
+		wprintf(L"\t 6. Email\n");
+		wprintf(L"\t 7. Hình ảnh cá nhân\n");
+		wprintf(L"\t 8. Mô tả\n");
+		wprintf(L"\t 9. Sở thích\n");
+		wprintf(L"\t 0. Tất cả\n");
+		wprintf(L"\t-1. Bỏ qua\n");
+		wscanf(L"%ld", &c);
+		if (c == -1) break;
+	}
 }
 
 

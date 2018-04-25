@@ -33,11 +33,11 @@ void GetSV(FILE*fp, SV &a);
 void GetInput(FILE*fp, SV* &data, int n);
 
 	//HTML
-wchar_t* CreateFileName(wchar_t* mssv, wchar_t* tail);
+wchar_t* CreateFileName(wchar_t* mssv, wchar_t* folder, wchar_t* tail);
 void CreateHTML(wchar_t* FileSample, SV* data, int sl);
 
 	//Sub Function
-void PrintSV(SV a);
+void PrintSV(SV* a, int sl);
 void MemoryDelete(SV &a);
 void MemoryInit(SV& a);
 void Upper(wchar_t *str);

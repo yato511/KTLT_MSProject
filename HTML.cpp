@@ -28,6 +28,7 @@ wchar_t InfoFooter[] = L"MSSV - Tên sinh viên thực hiện";
 
 
 //Một số chuỗi cố định
+wchar_t Folder[] = L"Website/";
 wchar_t FileTail[] = L".htm";	//Đuôi tên file
 wchar_t PjYear[] = L"2018";		//Năm
 wchar_t PjOwner_Index[] = L"1712827 - Trần Quốc Toản"; //MSSV và tên người làm đồ án
@@ -40,9 +41,10 @@ wchar_t PjOwner_Index[] = L"1712827 - Trần Quốc Toản"; //MSSV và tên ng�
 
 
 //Tạo tên File HTML: MSSV.htm
-wchar_t* CreateFileName(wchar_t* mssv, wchar_t* tail) {
-	wchar_t* filename = (wchar_t*)malloc(sizeof(wchar_t) * 15);
-	wcscpy(filename, mssv);
+wchar_t* CreateFileName(wchar_t* mssv,wchar_t* folder, wchar_t* tail) {
+	wchar_t* filename = (wchar_t*)malloc(sizeof(wchar_t) * 50);
+	wcscpy(filename, folder);
+	wcscat(filename, mssv);
 	wcscat(filename, tail);
 	return filename;
 }
@@ -60,7 +62,7 @@ void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 		}
 
 		//Tạo file HTML xuất ra
-		wchar_t* FileOutput = CreateFileName(data[i].MSSV, FileTail);
+		wchar_t* FileOutput = CreateFileName(data[i].MSSV, Folder, FileTail);
 		
 		FILE* output = _wfopen(FileOutput, L"w, ccs=UTF-8");
 		if (!output) {
