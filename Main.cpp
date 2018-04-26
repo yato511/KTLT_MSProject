@@ -14,6 +14,7 @@ int wmain(int argc, wchar_t *argv[]) {
 	}
 
 	//Đọc tập tin CSV vào struct
+	wprintf(L"\n-----Tiến hành đọc dữ liệu file CSV vào struct SV-----\n");
 	SV* Data = NULL;
 	int N = CountSV(input);
 	GetInput(input, Data, N);

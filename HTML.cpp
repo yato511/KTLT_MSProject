@@ -53,6 +53,7 @@ wchar_t* CreateFileName(wchar_t* mssv,wchar_t* folder, wchar_t* tail) {
 //Hàm ghi file HTML
 void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 	wchar_t* buf = (wchar_t*)malloc(1024); //Biến để đọc từng dòng
+	wprintf(L"\n\n-------PHẦN GHI FILE HTML--------\n");
 	for (int i = 0; i < sl; i++) {
 		
 
@@ -85,6 +86,7 @@ void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 
 		//Menu phát sinh Profile Page
 		//Cho phép người dùng kiểm soát những thông tin nào được phát sinh ra Profile Page
+		
 		wprintf(L"\nChọn những thông tin của sinh viên thứ %ld muốn phát sinh ra Profile Page\n", i + 1);
 		wprintf(L"\t  1. MSSV\n");
 		wprintf(L"\t  2. Họ và tên\n");
@@ -96,7 +98,7 @@ void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 		wprintf(L"\t  8. Mô tả\n");
 		wprintf(L"\t  9. Sở thích\n");
 		wprintf(L"\t 10. Tất cả\n");
-		wprintf(L"\n\t --Nhấn 0 để thoát menu và bắt đầu tạo Profile Page cho sinh viên thứ %ld--\n", i + 1);
+		wprintf(L"\n\t --Sau khi chọn xong, nhấn 0 để thoát menu và bắt đầu tạo Profile Page cho sinh viên thứ %ld--\n", i + 1);
 		int a[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		int b;
 		do {
