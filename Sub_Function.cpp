@@ -18,20 +18,20 @@ int size_sothich = 1001;
 //In thông tin SV ra màn hình
 void PrintSV(SV *a, int sl) {
 	wprintf(L"\nChọn thông tin của sinh viên muốn in ra màn hình\n");
-	wprintf(L"\t 1. MSSV\n");
-	wprintf(L"\t 2. Họ và tên\n");
-	wprintf(L"\t 3. Khoa\n");
-	wprintf(L"\t 4. Khóa tuyển\n");
-	wprintf(L"\t 5. Ngày sinh\n");
-	wprintf(L"\t 6. Email\n");
-	wprintf(L"\t 7. Hình ảnh cá nhân\n");
-	wprintf(L"\t 8. Mô tả\n");
-	wprintf(L"\t 9. Sở thích\n");
-	wprintf(L"\t 0. Tất cả\n");
-	wprintf(L"\t-1. Bỏ qua\n");
+	wprintf(L"\t  1. MSSV\n");
+	wprintf(L"\t  2. Họ và tên\n");
+	wprintf(L"\t  3. Khoa\n");
+	wprintf(L"\t  4. Khóa tuyển\n");
+	wprintf(L"\t  5. Ngày sinh\n");
+	wprintf(L"\t  6. Email\n");
+	wprintf(L"\t  7. Hình ảnh cá nhân\n");
+	wprintf(L"\t  8. Mô tả\n");
+	wprintf(L"\t  9. Sở thích\n");
+	wprintf(L"\t 10. Tất cả\n");
+	wprintf(L"\t  0. Bỏ qua và đi đến phần ghi file HTML\n");
 	int c;
 	wscanf(L"%ld", &c);
-	while (c != -1) {
+	while (c != 0) {
 		for (int i = 0; i < sl; i++) {
 			wprintf(L"\n\nThông tin của sinh viên thứ %ld:\n\n", i + 1);
 			switch (c) {
@@ -104,17 +104,17 @@ void PrintSV(SV *a, int sl) {
 		}
 
 		wprintf(L"\n\nBạn có muốn in ra màn hình thêm thông tin nào nữa không?\n");
-		wprintf(L"\t 1. MSSV\n");
-		wprintf(L"\t 2. Họ và tên\n");
-		wprintf(L"\t 3. Khoa\n");
-		wprintf(L"\t 4. Khóa tuyển\n");
-		wprintf(L"\t 5. Ngày sinh\n");
-		wprintf(L"\t 6. Email\n");
-		wprintf(L"\t 7. Hình ảnh cá nhân\n");
-		wprintf(L"\t 8. Mô tả\n");
-		wprintf(L"\t 9. Sở thích\n");
-		wprintf(L"\t 0. Tất cả\n");
-		wprintf(L"\t-1. Bỏ qua\n");
+		wprintf(L"\t  1. MSSV\n");
+		wprintf(L"\t  2. Họ và tên\n");
+		wprintf(L"\t  3. Khoa\n");
+		wprintf(L"\t  4. Khóa tuyển\n");
+		wprintf(L"\t  5. Ngày sinh\n");
+		wprintf(L"\t  6. Email\n");
+		wprintf(L"\t  7. Hình ảnh cá nhân\n");
+		wprintf(L"\t  8. Mô tả\n");
+		wprintf(L"\t  9. Sở thích\n");
+		wprintf(L"\t 10. Tất cả\n");
+		wprintf(L"\t  0. Bỏ qua và đi đến phần ghi file HTML\n");
 		wscanf(L"%ld", &c);
 		if (c == -1) break;
 	}

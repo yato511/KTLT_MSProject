@@ -28,7 +28,7 @@ int wmain(int argc, wchar_t *argv[]) {
 
 	//Bắt đầu tạo file HTML
 	CreateHTML(FileSample, Data, N);
-	wprintf(L"\n\n\n--->Đã ghi xong %d file HTML\n\n\n", N);
+	wprintf(L"\n\n-------->Đã ghi xong %d file HTML\n", N);
 
 	//Xóa vùng nhớ
 	for (int i = 0; i < N; i++) {
@@ -36,7 +36,7 @@ int wmain(int argc, wchar_t *argv[]) {
 	}
 	if (Data != NULL)
 		free(Data);
-	wprintf(L"\n\n\n--->Đã xóa vùng nhớ\n\n\n");
+	wprintf(L"\n\n--------->Đã xóa vùng nhớ\n\n\n");
 
 	wprintf(L"\n\n\n----------KẾT THÚC CHƯƠNG TRÌNH----------\n\n");
 	_getch();

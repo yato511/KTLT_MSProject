@@ -54,6 +54,7 @@ wchar_t* CreateFileName(wchar_t* mssv,wchar_t* folder, wchar_t* tail) {
 void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 	wchar_t* buf = (wchar_t*)malloc(1024); //Biến để đọc từng dòng
 	for (int i = 0; i < sl; i++) {
+		
 
 		//Mở File HTML mẫu
 		FILE* sample = _wfopen(FileSample, L"r, ccs=UTF-8");
@@ -81,25 +82,102 @@ void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 		wcscat(Ten_MSSV, L" - ");
 		wcscat(Ten_MSSV, data[i].MSSV);
 
+
+		//Menu phát sinh Profile Page
+		//Cho phép người dùng kiểm soát những thông tin nào được phát sinh ra Profile Page
+		wprintf(L"\nChọn những thông tin của sinh viên thứ %ld muốn phát sinh ra Profile Page\n", i + 1);
+		wprintf(L"\t  1. MSSV\n");
+		wprintf(L"\t  2. Họ và tên\n");
+		wprintf(L"\t  3. Khoa\n");
+		wprintf(L"\t  4. Khóa tuyển\n");
+		wprintf(L"\t  5. Ngày sinh\n");
+		wprintf(L"\t  6. Email\n");
+		wprintf(L"\t  7. Hình ảnh cá nhân\n");
+		wprintf(L"\t  8. Mô tả\n");
+		wprintf(L"\t  9. Sở thích\n");
+		wprintf(L"\t 10. Tất cả\n");
+		wprintf(L"\n\t --Nhấn 0 để thoát menu và bắt đầu tạo Profile Page cho sinh viên thứ %ld--\n", i + 1);
+		int a[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		int b;
+		do {
+			wscanf(L"%ld", &b);
+			if (b == 0) break;
+			if (1 <= b && b <= 9)
+			{
+				a[b] = 1;
+			}
+			else if (b == 10)
+			{
+				for (int i = 0; i < 10; i++)
+					a[i] = 1;
+				break;
+			}
+		} while (true);
+
+		wchar_t blank[] = L"\0";	//Chuỗi rỗng
+
+
 		//Bắt đầu đọc và thay thế
 		while (!feof(sample)) {
 			fgetws(buf, 1024, sample);
+
+			//Nếu được người dùng cho phép thì mới phát sinh thông tin đó ra HTML, nếu không thì thay thế bằng chuỗi rỗng
+
 			//Header
-			ReplaceString(buf, Title, End, data[i].HoVaTen);
-			ReplaceString(buf, FacUp, End, FacUp_temp);
-			ReplaceString(buf, EmailTop, EndEmailTop, data[i].Email);
-			ReplaceString(buf, NameMssv, End, Ten_MSSV);
-			ReplaceString(buf, Photo, EndPhoto, data[i].HinhAnh);
+			if (a[2] == 1)
+				ReplaceString(buf, Title, End, data[i].HoVaTen);	
+			else
+				ReplaceString(buf, Title, End, blank);
+
+			if (a[3] == 1)
+				ReplaceString(buf, FacUp, End, FacUp_temp);
+			else
+				ReplaceString(buf, FacUp, End, blank);
+
+			if (a[6] == 1)
+				ReplaceString(buf, EmailTop, EndEmailTop, data[i].Email);
+			else
+				ReplaceString(buf, EmailTop, EndEmailTop, blank);
+
+			if (a[1] == 1 && a[2] == 1)
+				ReplaceString(buf, NameMssv, End, Ten_MSSV);
+			else
+				ReplaceString(buf, NameMssv, End, blank);
+
+			if (a[7] == 1)
+				ReplaceString(buf, Photo, EndPhoto, data[i].HinhAnh);
+			else
+				ReplaceString(buf, Photo, EndPhoto, blank);
+
 			//Body
-			ReplaceString(buf, Name, End, data[i].HoVaTen);
-			ReplaceString(buf, Mssv, End, data[i].MSSV);
-			ReplaceString(buf, Fac, End, data[i].Faculty);
-			ReplaceString(buf, Birth, End, data[i].NgaySinh);
-			ReplaceString(buf, EmailBot, End, data[i].Email);
+			if (a[2] == 1)
+				ReplaceString(buf, Name, End, data[i].HoVaTen);
+			else
+				ReplaceString(buf, Name, End, blank);
+			
+			if (a[1] == 1)
+				ReplaceString(buf, Mssv, End, data[i].MSSV);
+			else 
+				ReplaceString(buf, Mssv, End, data[i].MSSV);
+
+			if (a[3] == 1)
+				ReplaceString(buf, Fac, End, data[i].Faculty);
+			else
+				ReplaceString(buf, Fac, End, blank);
+
+			if (a[5] == 1)
+				ReplaceString(buf, Birth, End, data[i].NgaySinh);
+			else
+				ReplaceString(buf, Birth, End, blank);
+
+			if (a[6] == 1)
+				ReplaceString(buf, EmailBot, End, data[i].Email);
+			else
+				ReplaceString(buf, Birth, End, blank);
+
 			//Footer
-			wchar_t* temp = (wchar_t*)malloc(50);
-			temp = (wchar_t*)data[i].Khoa;
 			ReplaceString(buf, Year, EndFooter, PjYear);
+
 
 			//Description xử lí riêng
 			//Vì BeginSign và EndSign của Description không nằm trên cùng dòng
@@ -115,7 +193,10 @@ void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 					keybegin[j] = buf[j];
 				}
 				keybegin[j] = '\0';
-				ReplaceString(buf, keybegin, keyend, data[i].Mota);
+				if (a[8] == 1)
+					ReplaceString(buf, keybegin, keyend, data[i].Mota);
+				else
+					ReplaceString(buf, keybegin, keyend, blank);
 				free(keybegin);
 			}
 
@@ -134,10 +215,16 @@ void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 				}
 				else {				//Nếu có sở thích, thay thế chuỗi nằm giữa <li> và </li>
 									//Tạo biến buf có dạng <li> Sở thích [k] </li>
-					for (int k = 0; k < data[i].HobbyCount; k++) {
-						ReplaceString(buf, HobbyElement, End, data[i].SoThich[k]);
-						fputws(buf, output);
-					}
+					if (a[9]==1)
+						for (int k = 0; k < data[i].HobbyCount; k++) {
+							ReplaceString(buf, HobbyElement, End, data[i].SoThich[k]);
+							fputws(buf, output);
+						}
+					else 
+						for (int k = 0; k < data[i].HobbyCount; k++) {
+							ReplaceString(buf, HobbyElement, End, blank);
+							fputws(buf, output);
+						}
 
 					fgetws(buf, 1024, sample);
 					fgetws(buf, 1024, sample);	//Đọc 2 lần nữa để bỏ qua 2 dòng sở thích trong file mẫu
@@ -168,6 +255,7 @@ void CreateHTML(wchar_t* FileSample, SV* data, int sl) {
 		free(FileOutput);
 		free(FacUp_temp);
 		free(Ten_MSSV);
+		wprintf(L"\n\n---->Đã tạo xong Profile Page cho sinh viên thứ %ld\n\n", i + 1);
 	}
 	free(buf);
 }
